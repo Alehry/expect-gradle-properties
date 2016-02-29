@@ -4,7 +4,7 @@ class RemotePropertiesPlugin implements Plugin<Project> {
     void apply(Project project) {
         println "Hello from RemotePropertiesPlugin"
         def props = project.container(RemoteProperty)
-        project.extensions.remoteProperties = props;
+        project.extensions.remoteProperties = props
         project.task(VALIDATION_TASK_NAME) << {
             props.all {
                 if (isMandatory && value == null) {
