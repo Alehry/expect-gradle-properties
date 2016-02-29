@@ -1,0 +1,21 @@
+class RemotePropertiesPlugin implements Plugin<Project> {
+    void apply(Project project) {
+        println "Hello from RemotePropertiesPlugin"
+        
+        println "Bye from RemotePropertiesPlugin"
+    }
+	
+}
+class RemoteProperty {
+    final String name
+    String value
+    RemoteProperty (String name) {
+        this.name = name
+    }
+	
+	void defaultValue(String value) {
+		if (this.value == null) {
+			this.value = value
+		}
+	}
+}
