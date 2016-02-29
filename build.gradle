@@ -1,21 +1,38 @@
 class RemotePropertiesPlugin implements Plugin<Project> {
+    def VALIDATION_TASK_NAME = 'validateRemoteProperties'
+    def NEXT_TASK = 'preBuild'
     void apply(Project project) {
         println "Hello from RemotePropertiesPlugin"
+        def props = project.container(RemoteProperty)
+        project.extensions.remoteProperties = props;
+        project.task(VALIDATION_TASK_NAME) << {
+            props.all {
+                if (mandatory && value == null) {
+                    println "Property '$name' is mandatory to set up."
+                    println "Please set up '$name' property on this machine using one of the following ways:"
+                    println "..."
+                }
+            }
+        }
+        project.getTasksByName(NEXT_TASK, false).find().dependsOn(project.getTasksByName(VALIDATION_TASK_NAME, false).find())
         
         println "Bye from RemotePropertiesPlugin"
     }
-	
 }
+
 class RemoteProperty {
     final String name
     String value
+    boolean isMandatory
     RemoteProperty (String name) {
         this.name = name
     }
-	
-	void defaultValue(String value) {
-		if (this.value == null) {
-			this.value = value
-		}
-	}
+    void mandatory(boolean isMandatory) {
+        this.isMandatory = isMandatory
+    }
+    void defaultValue(String value) {
+        if (this.value == null) {
+            this.value = value
+        }
+    }
 }
