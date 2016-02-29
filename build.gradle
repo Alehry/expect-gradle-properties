@@ -7,7 +7,7 @@ class RemotePropertiesPlugin implements Plugin<Project> {
         project.extensions.remoteProperties = props;
         project.task(VALIDATION_TASK_NAME) << {
             props.all {
-                if (mandatory && value == null) {
+                if (isMandatory && value == null) {
                     println "Property '$name' is mandatory to set up."
                     println "Please set up '$name' property on this machine using one of the following ways:"
                     println "..."
