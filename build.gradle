@@ -3,8 +3,15 @@ class RemotePropertiesPlugin implements Plugin<Project> {
     def NEXT_TASK = 'preBuild'
     void apply(Project project) {
         println "Hello from RemotePropertiesPlugin"
+        //Fill values in remoteProperties
         def props = project.container(RemoteProperty)
+        props.all {
+            if (project.hasProperty(name)) {
+                value = project.property(name)
+            }
+        }
         project.extensions.remoteProperties = props
+        //Define validation task
         project.task(VALIDATION_TASK_NAME) << {
             props.all {
                 if (isMandatory && value == null) {
@@ -27,12 +34,15 @@ class RemoteProperty {
     RemoteProperty (String name) {
         this.name = name
     }
-    void mandatory(boolean isMandatory) {
+    void isMandatory(boolean isMandatory) {
         this.isMandatory = isMandatory
     }
     void defaultValue(String value) {
         if (this.value == null) {
             this.value = value
         }
+    }
+	void defaultValue(Object value) {
+        defaultValue(value + "")
     }
 }
