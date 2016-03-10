@@ -13,16 +13,22 @@ class RemotePropertiesPlugin implements Plugin<Project> {
         project.extensions.remoteProperties = props
         //Define validation task
         project.task(VALIDATION_TASK_NAME) << {
+            boolean mandatoryPropertyIsNotSet = false
             props.all {
                 if (isMandatory && value == null) {
                     println "Property '$name' is mandatory to set up."
-                    println "Please set up '$name' property on this machine using one of the following ways:"
-                    println "..."
+
+                    mandatoryPropertyIsNotSet = true
                 }
+            }
+            if (mandatoryPropertyIsNotSet) {
+                println "Please set up mandatory properties on this machine using one of the following ways:"
+                println "..."
+                throw new GradleException("Mandatory options are not set")
             }
         }
         project.getTasksByName(NEXT_TASK, false).find().dependsOn(project.getTasksByName(VALIDATION_TASK_NAME, false).find())
-        
+
         println "Bye from RemotePropertiesPlugin"
     }
 }
@@ -42,7 +48,7 @@ class RemoteProperty {
             this.value = value
         }
     }
-	void defaultValue(Object value) {
+    void defaultValue(Object value) {
         defaultValue(value + "")
     }
 }
