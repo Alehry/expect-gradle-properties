@@ -1,3 +1,4 @@
+
 class RemotePropertiesPlugin implements Plugin<Project> {
     def VALIDATION_TASK_NAME = 'validateRemoteProperties'
     def NEXT_TASK = 'preBuild'
@@ -24,7 +25,7 @@ class RemotePropertiesPlugin implements Plugin<Project> {
             if (mandatoryPropertyIsNotSet) {
                 println "Please set up mandatory properties on this machine using one of the following ways:"
                 println "..."
-                throw new GradleException("Mandatory options are not set")
+                throw new GradleException("Mandatory properties are not set")
             }
         }
         project.getTasksByName(NEXT_TASK, false).find().dependsOn(project.getTasksByName(VALIDATION_TASK_NAME, false).find())
