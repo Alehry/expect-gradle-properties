@@ -1,55 +1,48 @@
-
-class RemotePropertiesPlugin implements Plugin<Project> {
-    def VALIDATION_TASK_NAME = 'validateRemoteProperties'
-    def NEXT_TASK = 'preBuild'
-    void apply(Project project) {
-        println "Hello from RemotePropertiesPlugin"
-        //Fill values in remoteProperties
-        def props = project.container(RemoteProperty)
-        props.all {
-            if (project.hasProperty(name)) {
-                value = project.property(name)
-            }
-        }
-        project.extensions.remoteProperties = props
-        //Define validation task
-        project.task(VALIDATION_TASK_NAME) << {
-            boolean mandatoryPropertyIsNotSet = false
-            props.all {
-                if (isMandatory && value == null) {
-                    println "Property '$name' is mandatory to set up."
-
-                    mandatoryPropertyIsNotSet = true
-                }
-            }
-            if (mandatoryPropertyIsNotSet) {
-                println "Please set up mandatory properties on this machine using one of the following ways:"
-                println "..."
-                throw new GradleException("Mandatory properties are not set")
-            }
-        }
-        project.getTasksByName(NEXT_TASK, false).find().dependsOn(project.getTasksByName(VALIDATION_TASK_NAME, false).find())
-
-        println "Bye from RemotePropertiesPlugin"
+buildscript {
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
     }
+  }
+  dependencies {
+    classpath "com.gradle.publish:plugin-publish-plugin:0.9.4"
+  }
 }
 
-class RemoteProperty {
-    final String name
-    String value
-    boolean isMandatory
-    RemoteProperty (String name) {
-        this.name = name
+apply plugin: "com.gradle.plugin-publish"
+// Apply other plugins here, e.g. java plugin for a plugin written in java or
+// the groovy plugin for a plugin written in groovy
+apply plugin: "groovy"
+// If your plugin has any external java dependencies, Gradle will attempt to
+// downloaded them from JCenter for anyone using the plugins DSL
+// so you should probably use JCenter for dependency resolution in your own
+// project.
+repositories {
+  jcenter()
+}
+
+dependencies {
+  compile gradleApi()
+  compile localGroovy() //not needed for Java plugins
+  // other dependencies that your plugin requires
+}
+
+pluginBundle {
+  // These settings are set for the whole plugin bundle
+  website = 'http://www.gradle.org/'
+  vcsUrl = 'https://github.com/Alehry/expect-gradle-properties'
+
+  description = "This plugin gives you control on project properties"
+  version = '0.0.1'
+  
+  plugins {
+  
+
+    expectedProperties {
+      id = 'org.niksi.properties'
+      displayName = 'Expected Properties'
+      tags = ['properties', 'settings', 'build']
+      version = '0.0.1'
     }
-    void isMandatory(boolean isMandatory) {
-        this.isMandatory = isMandatory
-    }
-    void defaultValue(String value) {
-        if (this.value == null) {
-            this.value = value
-        }
-    }
-    void defaultValue(Object value) {
-        defaultValue(value + "")
-    }
+  }
 }
