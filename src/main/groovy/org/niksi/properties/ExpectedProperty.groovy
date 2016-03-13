@@ -1,10 +1,10 @@
 package org.niksi.properties
 
-class RemoteProperty {
+class ExpectedProperty {
     final String name
     String value
     boolean isMandatory
-    RemoteProperty (String name) {
+    ExpectedProperty (String name) {
         this.name = name
     }
     void isMandatory(boolean isMandatory) {

@@ -4,13 +4,13 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.GradleException
 
-class RemotePropertiesPlugin implements Plugin<Project> {
-    def VALIDATION_TASK_NAME = 'validateRemoteProperties'
+class ExpectedPropertiesPlugin implements Plugin<Project> {
+    def VALIDATION_TASK_NAME = 'validateProperties'
     def NEXT_TASK = 'preBuild'
     void apply(Project project) {
-        println "Hello from RemotePropertiesPlugin"
+        println "Hello from ExpectPropertiesPlugin"
         //Fill values in remoteProperties
-        def props = project.container(RemoteProperty)
+        def props = project.container(ExpectedProperty)
         props.all {
             if (project.hasProperty(name)) {
                 value = project.property(name)
@@ -35,6 +35,6 @@ class RemotePropertiesPlugin implements Plugin<Project> {
         }
         project.getTasksByName(NEXT_TASK, false).find().dependsOn(project.getTasksByName(VALIDATION_TASK_NAME, false).find())
 
-        println "Bye from RemotePropertiesPlugin"
+        println "Bye from ExpectPropertiesPlugin"
     }
 }
